@@ -58,6 +58,7 @@ in {
       killall # Tool to kill all programs matching process name
       lout # Logout from any shell
       lsd # Better ls command
+      mullvad # VPN
       ncdu # Terminal disk analyzer
       nix-gc # Garbage collect old nix generations
       ntfs3g # Support NTFS drives
@@ -117,6 +118,7 @@ in {
 
   services = {
     clamav.updater.enable = true;
+    mullvad-vpn.enable = true;
     openssh.enable = true;
     tailscale.enable = true;
   };
