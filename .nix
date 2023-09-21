@@ -30,6 +30,28 @@
         };
       };
 
+      networking = {
+        dns = mkOption {
+          type = types.str;
+          default = "9.9.9.9";
+        };
+
+        gateway = mkOption {
+          type = types.str;
+          default = "192.168.1.1";
+        };
+
+        interface = mkOption {
+          type = types.str;
+          default = "eno1";
+        };
+
+        ip = mkOption {
+          type = types.str;
+          default = "192.168.1.2";
+        };
+      };
+
       virtualisation = {
         # Container manager
         docker.enable = mkOption {
