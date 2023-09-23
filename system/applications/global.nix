@@ -18,6 +18,17 @@ let
     pkill -KILL -u $USER
   '';
 
+  codingDeps = with pkgs; [
+    cargo # Rust package manager
+    dotnet-sdk_7 # SDK for .net
+    gcc # C++ compiler
+    gdtoolkit # Tools for gdscript
+    nixfmt # A nix formatter
+    nodejs # Node package manager
+    python3 # Python
+    vscodium # All purpose IDE
+  ];
+
   nvchadDeps = with pkgs; [
     beautysh # Bash formatter
     black # Python formatter
@@ -71,7 +82,7 @@ in {
       unrar # Support opening rar files
       unzip # An extraction utility
       wget # Terminal downloader
-    ] ++ nvchadDeps;
+    ] ++ codingDeps ++ nvchadDeps;
 
   users.defaultUserShell = pkgs.zsh; # Use ZSH shell for all users
 
