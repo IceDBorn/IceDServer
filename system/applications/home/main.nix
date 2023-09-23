@@ -36,6 +36,11 @@ lib.mkIf config.system.user.main.enable {
         recursive = true;
       };
 
+      # Add zsh theme to zsh directory
+      ".config/zsh/scripts/mullvad-setup.sh" = {
+        source = ../../scripts/mullvad-setup.sh;
+      };
+
       # Add btop config
       ".config/btop/btop.conf" = {
         source = ../configs/btop.conf;

@@ -112,6 +112,8 @@ in {
         ls = "lsd"; # Better ls command
         mva = "rsync -rP --remove-source-files"; # Move command with details
         n = "tmux a -t nvchad || tmux new -s nvchad nvim"; # Nvchad
+        mullvad-setup =
+          "bash ~/.config/zsh/scripts/mullvad-setup.sh"; # Setup mullvad relay options
         ping = "gping"; # ping with a graph
         rebuild =
           "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && bash rebuild.sh)"; # Rebuild the system configuration
