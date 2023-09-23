@@ -2,6 +2,8 @@
 
 {
   networking = {
+    firewall.enable = false;
+
     # Static IP
     interfaces = {
       ${config.hardware.networking.interface} = {
