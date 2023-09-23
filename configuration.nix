@@ -11,6 +11,7 @@
     ./hardware/intel.nix
     ./hardware/network.nix
     ./hardware/virtualisation.nix
+    ./system
     ./system/applications
     ./system/users
   ];
