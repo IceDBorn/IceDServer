@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   networking = {
@@ -32,4 +32,14 @@
     networkmanager.enable = false;
   };
   systemd.network.enable = false;
+
+  # Enable dnsmaq for DNS proxying
+  environment.systemPackages = [ pkgs.dnsmasq ];
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      resolv-file = "/etc/resolv.conf";
+      listen-address = config.hardware.networking.ip;
+    };
+  };
 }
