@@ -38,7 +38,7 @@ lib.mkIf config.system.user.main.enable {
 
       # Add zsh theme to zsh directory
       ".config/zsh/scripts/post-install.sh" = {
-        source = ../../scripts/mullvad-setup.sh;
+        source = ../../scripts/post-install.sh;
       };
 
       # Add btop config
