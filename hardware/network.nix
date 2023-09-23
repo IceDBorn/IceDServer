@@ -24,8 +24,7 @@
     # Enable vpn sharing
     nat = {
       enable = true;
-      internalInterfaces =
-        [ "tailscale0" config.hardware.networking.interface ];
+      internalInterfaces = [ config.hardware.networking.interface ];
     };
 
     networkmanager.enable = false;
