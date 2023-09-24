@@ -121,11 +121,13 @@ in {
         mva = "rsync -rP --remove-source-files"; # Move command with details
         n = "tmux a -t nvchad || tmux new -s nvchad nvim"; # Nvchad
         ping = "gping"; # ping with a graph
-        rebuild =
-          "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && bash rebuild.sh)"; # Rebuild the system configuration
+        rebuild = "(cd ${
+            builtins.readFile ../../.configuration-location
+          } 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && false) && bash build.sh)";
         ssh = "TERM=xterm-256color ssh"; # SSH with colors
-        update =
-          "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && nix flake update && bash rebuild.sh)"; # Update everything
+        update = "(cd ${
+            builtins.readFile ../../.configuration-location
+          } 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && false) && nix flake update && bash build.sh)";
         v = "nvim"; # Neovim
       };
 

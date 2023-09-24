@@ -17,11 +17,14 @@ echo "Hello $username!"
 read -r -p "Have you customized the setup to your needs? [y/N] " response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
 then
-    # Add configuration files to the appropriate path
-    sudo cp -r `ls -A | grep -v ".git"` /etc/nixos
+    bash build.sh
 
-    # Build the configuration
-    sudo nixos-rebuild switch
+    if [ -f "$HOME/.nix-successful-build" ]
+    then
+        echo "Nix generation was successful!"
+    else
+        echo "Nix generation was not successful!"
+    fi
 else
     printf "You really should:
     - Edit .nix, configuration.nix and comment out anything you do not want to setup."
