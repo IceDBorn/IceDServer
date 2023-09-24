@@ -1,6 +1,7 @@
-# Caution
+# Caution ⚠️
 
-- ⚠️ Do not forget to go through .nix, configuration.nix and edit and comment out (#) anything you don't want to setup!
+- Do not forget to go through .nix, configuration.nix and edit and comment out (#) anything you don't want to setup!
+- If the tailscale container is enabled, you have to fill in the auth key, before building for the first time
 
 # Install
 
