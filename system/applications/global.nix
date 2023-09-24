@@ -65,7 +65,6 @@ in {
 
   environment.systemPackages = with pkgs;
     [
-      (callPackage ./self-built/apx.nix { }) # Package manager using distrobox
       aria # Terminal downloader with multiple connections support
       bat # Better cat command
       btop # System monitor
@@ -109,7 +108,6 @@ in {
 
       # Aliases
       shellAliases = {
-        apx = "apx --aur"; # Use arch as the base apx container
         aria2c = "aria2c -j 16 -s 16"; # Download with aria using best settings
         btrfs-compress =
           "sudo btrfs filesystem defrag -czstd -r -v"; # Compress given path with zstd
@@ -128,7 +126,7 @@ in {
           "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && bash rebuild.sh)"; # Rebuild the system configuration
         ssh = "TERM=xterm-256color ssh"; # SSH with colors
         update =
-          "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && nix flake update && bash rebuild.sh) ; (apx --aur upgrade)"; # Update everything
+          "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && nix flake update && bash rebuild.sh)"; # Update everything
         v = "nvim"; # Neovim
       };
 
@@ -144,8 +142,4 @@ in {
     openssh.enable = true;
     tailscale.enable = true;
   };
-
-  # Symlink files and folders to /etc
-  environment.etc."apx/config.json".source =
-    "${(pkgs.callPackage self-built/apx.nix { })}/etc/apx/config.json";
 }
