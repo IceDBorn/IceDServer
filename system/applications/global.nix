@@ -18,6 +18,15 @@ let
     pkill -KILL -u $USER
   '';
 
+  post-login = pkgs.writeShellScriptBin "post-install" ''
+    mullvad auto-connect set on
+    mullvad lan set allow
+    mullvad relay set tunnel-protocol wireguard
+    mullvad relay set location bg sof
+    mullvad connect
+    tailscale up
+  '';
+
   codingDeps = with pkgs; [
     cargo # Rust package manager
     dotnet-sdk_7 # SDK for .net

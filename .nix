@@ -53,6 +53,36 @@
       };
 
       virtualisation = {
+        # Containers to build with docker
+        containers = {
+          # Control panel for docker
+          portainer.enable = mkOption {
+            type = types.bool;
+            default = true;
+          };
+
+          # Stremio caching server
+          stremio.enable = mkOption {
+            type = types.bool;
+            default = true;
+          };
+
+          # VPN server
+          tailscale = {
+            enable = mkOption {
+              type = types.bool;
+              default = true;
+            };
+
+            # This key is only needed to login on the first run
+            authkey = mkOption {
+              type = types.str;
+              default = "TAILSCALE_AUTHENTICATION_KEY";
+            };
+          };
+
+        };
+
         # Container manager
         docker.enable = mkOption {
           type = types.bool;
