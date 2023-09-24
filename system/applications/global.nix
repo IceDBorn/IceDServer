@@ -2,8 +2,9 @@
 { pkgs, config, ... }:
 
 let
-  trim-generations = pkgs.writeShellScriptBin "trim-generations"
-    (builtins.readFile ../scripts/trim-generations.sh);
+  lout = pkgs.writeShellScriptBin "lout" ''
+    pkill -KILL -u $USER
+  '';
 
   nix-gc = pkgs.writeShellScriptBin "nix-gc" ''
     gens=${config.system.gc.generations} ;
@@ -14,10 +15,6 @@ let
     nix-store --gc
   '';
 
-  lout = pkgs.writeShellScriptBin "lout" ''
-    pkill -KILL -u $USER
-  '';
-
   post-login = pkgs.writeShellScriptBin "post-install" ''
     mullvad auto-connect set on
     mullvad lan set allow
@@ -26,6 +23,9 @@ let
     mullvad connect
     tailscale up
   '';
+
+  trim-generations = pkgs.writeShellScriptBin "trim-generations"
+    (builtins.readFile ../scripts/trim-generations.sh);
 
   codingDeps = with pkgs; [
     cargo # Rust package manager
@@ -82,6 +82,7 @@ in {
       nix-gc # Garbage collect old nix generations
       ntfs3g # Support NTFS drives
       p7zip # 7zip
+      post-login # Script to run after logging in to vpn services
       ranger # Terminal file manager
       tailscale # VPN with P2P support
       tmux # Terminal multiplexer
@@ -119,8 +120,6 @@ in {
         ls = "lsd"; # Better ls command
         mva = "rsync -rP --remove-source-files"; # Move command with details
         n = "tmux a -t nvchad || tmux new -s nvchad nvim"; # Nvchad
-        post-install =
-          "bash ~/.config/zsh/scripts/post-install.sh"; # Setup mullvad relay options
         ping = "gping"; # ping with a graph
         rebuild =
           "(cd $(head -1 /etc/nixos/.configuration-location) 2> /dev/null || (echo 'Configuration path is invalid. Run rebuild.sh manually to update the path!' && false) && bash rebuild.sh)"; # Rebuild the system configuration
