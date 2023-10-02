@@ -2,6 +2,29 @@
 { pkgs, config, ... }:
 
 let
+  configuration-location = builtins.readFile ../../.configuration-location;
+
+  rebuild = pkgs.writeShellScriptBin "rebuild" ''
+    # Navigate to configuration directory
+    cd ${configuration-location} 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && exit 2)
+    bash build.sh
+  '';
+
+  update = pkgs.writeShellScriptBin "update" ''
+    stashLock=$(git stash push -m "flake.lock@$(date +%A-%d-%B-%T)" flake.lock > /dev/null)
+      # Navigate to configuration directory
+      cd ${configuration-location} 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && exit 2)
+
+      # Stash the flake lock file
+      if [ $(git stash list | wc -l) -eq 0 ]; then
+        $stashLock
+      else
+        [ -n "$(git diff stash flake.lock)" ] && $stashLock
+      fi
+
+      nix flake update && bash build.sh
+  '';
+
   lout = pkgs.writeShellScriptBin "lout" ''
     pkill -KILL -u $USER
   '';
@@ -84,12 +107,14 @@ in {
       p7zip # 7zip
       post-login # Script to run after logging in to vpn services
       ranger # Terminal file manager
+      rebuild # Rebuild the system configuration
       tailscale # VPN with P2P support
       tmux # Terminal multiplexer
       tree # Display folder content at a tree format
       trim-generations # Smarter old nix generations cleaner
       unrar # Support opening rar files
       unzip # An extraction utility
+      update # Update the system configuration
       wget # Terminal downloader
     ] ++ codingDeps ++ nvchadDeps;
 
@@ -121,13 +146,7 @@ in {
         mva = "rsync -rP --remove-source-files"; # Move command with details
         n = "tmux a -t nvchad || tmux new -s nvchad nvim"; # Nvchad
         ping = "gping"; # ping with a graph
-        rebuild = "(cd ${
-            builtins.readFile ../../.configuration-location
-          } 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && false) && bash build.sh)";
         ssh = "TERM=xterm-256color ssh"; # SSH with colors
-        update = "(cd ${
-            builtins.readFile ../../.configuration-location
-          } 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && false) && nix flake update && bash build.sh)";
         v = "nvim"; # Neovim
       };
 
