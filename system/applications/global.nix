@@ -2,33 +2,12 @@
 { pkgs, config, ... }:
 
 let
-  configuration-location = builtins.readFile ../../.configuration-location;
-
-  rebuild = pkgs.writeShellScriptBin "rebuild" ''
-    # Navigate to configuration directory
-    cd ${configuration-location} 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && exit 2)
-    bash build.sh
-  '';
-
-  update = pkgs.writeShellScriptBin "update" ''
-    stashLock=$(git stash push -m "flake.lock@$(date +%A-%d-%B-%T)" flake.lock > /dev/null)
-      # Navigate to configuration directory
-      cd ${configuration-location} 2> /dev/null || (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && exit 2)
-
-      # Stash the flake lock file
-      if [ $(git stash list | wc -l) -eq 0 ]; then
-        $stashLock
-      else
-        [ -n "$(git diff stash flake.lock)" ] && $stashLock
-      fi
-
-      nix flake update && bash build.sh
-  '';
-
+  # Logout from any shell
   lout = pkgs.writeShellScriptBin "lout" ''
     pkill -KILL -u $USER
   '';
 
+  # Garbage collect the nix store
   nix-gc = pkgs.writeShellScriptBin "nix-gc" ''
     gens=${config.system.gc.generations} ;
     days=${config.system.gc.days} ;
@@ -47,8 +26,40 @@ let
     tailscale up
   '';
 
+  # Rebuild the system configuration
+  rebuild = pkgs.writeShellScriptBin "rebuild" ''
+    # Arguments for update and main user specific commands
+    ARG1=''${1:-0}
+
+    # Stash flake.lock
+    function stashLock() {
+      git stash store $(git stash create) -m "flake.lock@$(date +%A-%d-%B-%T)"
+    }
+
+    # Navigate to configuration directory
+    cd ${config.system.configuration-location} 2> /dev/null ||
+    (echo 'Configuration path is invalid. Run build.sh manually to update the path!' && false) &&
+
+    # Update specific commands
+    if [ $ARG1 -eq 1 ]; then
+      # Stash the flake lock file
+      if [ $(git stash list | wc -l) -eq 0 ]; then
+        stashLock
+      else
+        [ -n "$(git diff stash flake.lock)" ] && stashLock
+      fi
+
+      nix flake update && bash build.sh
+    else
+      bash build.sh
+    fi
+  '';
+
+  # Trim NixOS generations
   trim-generations = pkgs.writeShellScriptBin "trim-generations"
     (builtins.readFile ../scripts/trim-generations.sh);
+
+  update = pkgs.writeShellScriptBin "update" "rebuild 1";
 
   codingDeps = with pkgs; [
     cargo # Rust package manager
@@ -60,6 +71,9 @@ let
     python3 # Python
     vscodium # All purpose IDE
   ];
+
+  # Packages to add for a fork of the config
+  myPackages = with pkgs; [ ];
 
   nvchadDeps = with pkgs; [
     beautysh # Bash formatter
@@ -80,9 +94,9 @@ let
     rust-analyzer # Rust language server
     rustfmt # Rust formatter
     stylua # Lua formatter
-    nixfmt # A nix formatter
-    nodejs # Javascript engine
   ];
+
+  shellScripts = [ lout nix-gc post-login rebuild trim-generations update ];
 in {
   boot.kernelPackages = pkgs.linuxPackages_zen; # Use ZEN linux kernel
 
@@ -116,7 +130,7 @@ in {
       unzip # An extraction utility
       update # Update the system configuration
       wget # Terminal downloader
-    ] ++ codingDeps ++ nvchadDeps;
+    ] ++ codingDeps ++ nvchadDeps ++ myPackages ++ shellScripts;
 
   users.defaultUserShell = pkgs.zsh; # Use ZSH shell for all users
 
