@@ -1,6 +1,6 @@
 # Caution ⚠️
 
-- Do not forget to go through [.nix](https://github.com/IceDBorn/IceDOS/blob/main/.nix), [configuration.nix](https://github.com/IceDBorn/IceDOS/blob/main/configuration.nix) and edit and comment out (#) anything you don't want to setup!
+- Do not forget to go through [.nix](https://github.com/IceDBorn/IceDServer/blob/main/.nix), [configuration.nix](https://github.com/IceDBorn/IceDServer/blob/main/configuration.nix) and edit and comment out (#) anything you don't want to setup!
 
 # Install
 
