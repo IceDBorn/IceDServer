@@ -31,16 +31,10 @@ lib.mkIf config.system.user.main.enable {
 
     home.file = {
       # Add zsh theme to zsh directory
-      ".config/zsh/zsh-theme.zsh" = {
-        source = ../configs/zsh-theme.zsh;
-        recursive = true;
-      };
+      ".config/zsh/zsh-theme.zsh".source = ../configs/zsh-theme.zsh;
 
       # Add btop config
-      ".config/btop/btop.conf" = {
-        source = ../configs/btop.conf;
-        recursive = true;
-      };
+      ".config/btop/btop.conf".source = ../configs/btop.conf;
 
       # Add nvchad
       ".config/nvim" = {
@@ -55,20 +49,15 @@ lib.mkIf config.system.user.main.enable {
       };
 
       # Add tmux
-      ".config/tmux/tmux.conf" = {
-        source = ../configs/tmux.conf;
-        recursive = true;
-      };
+      ".config/tmux/tmux.conf".source = ../configs/tmux.conf;
 
       ".config/tmux/tpm" = {
         source = "${(pkgs.callPackage ../self-built/tpm.nix { })}";
         recursive = true;
       };
 
-      ".bashrc" = {
-        text = "";
-        recursive = true;
-      }; # Avoid file not found errors for bash
+      # Avoid file not found errors for bash
+      ".bashrc".text = "";
     };
   };
 }
